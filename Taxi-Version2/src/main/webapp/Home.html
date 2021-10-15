@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>BookYourComfortness!!</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<img src="TaxiLogo.png" style="display: block;margin-left: auto;margin-right: auto;width: 10%;">
+<table align="center">
+<tr>
+<td><button id="taxi" name="users" value="Taxi">Taxi</button></td>
+</tr>
+<tr>
+<td><button id="user" name="users" value="User">User</button></td>
+</tr>
+<tr>
+<td><button id="book" name="users" value="Book">Book</button></td>
+</tr>
+</table>
+<div id="taxiinfo"></div>
+<div id="userinfo"></div>
+<div id="bookinfo"></div>
+<div id="createtaxi"></div>
+<div id="createuser"></div>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#taxi").click(function(){
+		$("#taxi").hide();
+		$("#user").hide();
+		$("#book").hide();
+		$.ajax({
+			type:'GET',
+			url:'/Taxi-Version2/connection?users=Taxi',
+			headers:{
+				Accept:"application/json; charset=utf-8",
+				"Content-Type" : "application/json; charset=utf-8"
+			},		
+			success:function(result){
+				var tbltop ="<table border='1' width=100%><tr><th>TaxiId</th><th>FreeTime</th><th>CurrentPoint</th><th>Earnings</th><th>MobileNumber</th></tr>";
+				var main ="";
+		            for (i = 0; i < result.length; i++){
+		              main += "<tr><td>"+result[i].id+"</td><td>"+result[i].freeTime+"</td><td>"+result[i].currentPoint+"</td><td>"+result[i].totalEarnings+"</td><td>"+result[i].mobileNumber+"</td></tr>";
+		            }
+		            var tblbottom = "</table><table  width=100%><tr><th><button id='addtaxi' name='users' value='AddTaxi'>AddTaxi</button></th></tr></table>";
+		            var tbl = tbltop + main + tblbottom;
+		            $("#taxiinfo").html(tbl);	
+			}
+		});
+	});
+	$("#user").click(function(){
+		$("#taxi").hide();
+		$("#user").hide();
+		$("#book").hide();
+		$("#taxiinfo").hide();
+		$.ajax({
+			type:'GET',
+			url:'/Taxi-Version2/connection?users=User',
+			headers:{
+				Accept:"application/json; charset=utf-8",
+				"Content-Type" : "application/json; charset=utf-8"
+			},	
+			success:function(result){
+				var tbltop = "<table border='1' width=100%><tr><th>UserId</th><th>Name</th><th>MobileNumber</th><th>Wallet</th></tr>";
+				var main ="";
+		            for (i = 0; i < result.length; i++){
+		              main += "<tr><td>"+result[i].userId+"</td><td>"+result[i].userName+"</td><td>"+result[i].mobileNumber+"</td><td>"+result[i].wallet+"</td></tr>";
+		            }
+		            var tblbottom = "</table><table  width=100%><tr><th><button id='adduser' name='users' value='AddUser'>AddUser</button></th></tr></table>";
+		            var tbl = tbltop + main + tblbottom;
+		            $("#userinfo").html(tbl);
+			}
+		});
+	});
+	$("#book").click(function(){
+		$("#taxi").hide();
+		$("#user").hide();
+		$("#book").hide();
+		$("#taxiinfo").hide();
+		$("#userinfo").hide();
+		var form="<table align='center'><tr style='line-height:50px'><td><label for='Uid'><b>UserId</b></label></td>";
+		form+="<td><input type='text' placeholder='Enter your userid' name='userid' id='id' required></td></tr>";
+		form+="<tr style='line-height:50px'><td><label for='point'><b>PickupPoint</b></label></td><td>";
+		form+="<input type='text' placeholder='Enter the pickup point' name='pickuppoint' id='pickpoint' required></td>";
+		form+="</tr ><tr style='line-height:50px'><td><label for='dpoint'><b>DropPoint</b></label></td>";
+		form+="<td><input type='text' placeholder='Enter the drop point' name='droppoint' id='droppoint' required></td>";
+		form+="</tr ><tr style='line-height:50px'><td><label for='mobile'><b>PickupTime</b></label></td>";
+		form+="<td><input type='text' placeholder='Enter the pickup time' name='time' id='picktime' required></td></tr >";
+		form+="<tr style='line-height:50px'><td><button id='booktaxi' name='users' value='BookTaxi'>Book</button></td></table>";
+		$("#bookinfo").html(form);
+	});
+	$(document).on('click','#booktaxi',function(){
+		var id=$("#id").val();
+		var pickup=$("#pickpoint").val();
+		var drop=$("#droppoint").val();
+		var time=$("#picktime").val();
+		$.ajax({
+			type:'GET',
+			url:'/Taxi-Version2/connection?userid='+id+'&pickuppoint='+pickup+'&droppoint='+drop+'&time='+time+'&users=BookTaxi',
+			headers:{
+				Accept:"application/json; charset=utf-8",
+				"Content-Type" : "application/json; charset=utf-8"
+			},
+			success:function(result){
+				alert(result);
+			}
+		});
+	});
+	$(document).on('click','#addtaxi',function(){
+		$("#taxi").hide();
+		$("#user").hide();
+		$("#book").hide();
+		$("#taxiinfo").hide();
+		$("#userinfo").hide();
+		var form="<table align='center'><tr style='line-height:50px'><td><label for='Mobile'><b>MobileNumber</b></label></td>";
+		form+="<td><input type='text' placeholder='Enter your mobile' name='mobile' id='mobile' required></td></tr>";
+		form+="<tr style='line-height:50px'><td><button id='submittaxi' name='users' value='SubmitTaxi'>Submit</button></td></table>";
+		$("#createtaxi").html(form);
+	});
+	$(document).on('click','#submittaxi',function(){
+		var mobile=$("#mobile").val();
+		$.ajax({
+			type:'GET',
+			url:'/Taxi-Version2/connection?mobile='+mobile+'&users=SubmitNewTaxi',
+			headers:{
+				Accept:"application/json; charset=utf-8",
+				"Content-Type" : "application/json; charset=utf-8"
+			},
+			success:function(result){
+				alert(result);
+			}
+		});
+	});
+	$(document).on('click','#adduser',function(){
+		$("#taxi").hide();
+		$("#user").hide();
+		$("#book").hide();
+		$("#taxiinfo").hide();
+		$("#userinfo").hide();
+		var form="<table align='center'><tr style='line-height:50px'><td><label for='Mobile'><b>MobileNumber</b></label></td>";
+		form+="<td><input type='text' placeholder='Enter your mobile' name='mobile' id='mobile' required></td></tr>";
+		form+="<tr style='line-height:50px'><td><label for='name'><b>Name</b></label></td><td>";
+		form+="<input type='text' placeholder='Enter the name' name='name' id='uname' required></td>";
+		form+="</tr ><tr style='line-height:50px'><td><label for='wallet'><b>Wallet</b></label></td>";
+		form+="<td><input type='text' placeholder='Enter the amount' name='amount' id='wallet' required></td>";
+		form+="<tr style='line-height:50px'><td><button id='submituser' name='users' value='SubmitUser'>Submit</button></td></table>";
+		$("#createuser").html(form);
+	});
+	$(document).on('click','#submituser',function(){
+		var mobile=$("#mobile").val();
+		var name=$("#uname").val();
+		var wallet=$("#wallet").val();
+		$.ajax({
+			type:'GET',
+			url:'/Taxi-Version2/connection?mobile='+mobile+'&name='+name+'&wallet='+wallet+'&users=SubmitNewUser',
+			headers:{
+				Accept:"application/json; charset=utf-8",
+				"Content-Type" : "application/json; charset=utf-8"
+			},
+			success:function(result){
+				alert(result);
+			}
+		});
+	});
+});
+</script>
+</body>
+</html>
